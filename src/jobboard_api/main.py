@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from jobboard_api.core.config import settings
 from jobboard_api.api.v1.endpoints.auth import router as auth_router  # ← add this
-
+from jobboard_api.api.v1.endpoints.company import router as company_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -18,4 +18,5 @@ async def health():
     return {"status": "healthy"}
 
 
-app.include_router(auth_router)  # ← add this
+app.include_router(auth_router)
+app.include_router(company_router)

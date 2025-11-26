@@ -1,16 +1,17 @@
 services:
   db:
-    image: postgres:16-alpine
-    container_name: jobboard-db
-    restart: unless-stopped
+    image: postgres:16
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: jobboard
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123   # ← change if yours is different
     ports:
-      - "5433:5432"          # we changed this
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - "5433:5432"   # ← THIS IS THE WINNING LINE
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
