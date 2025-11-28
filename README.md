@@ -1,22 +1,47 @@
-# FastAPI Job Board (My First Full Project)
+# FastAPI JobBoard – My First Real Backend Project (and it's a fucking beast)
 
-A clean, modern job board API built with FastAPI, PostgreSQL, JWT auth, and Docker.
+A complete, production-ready job board API built from scratch with **FastAPI + PostgreSQL + JWT + Docker**.
 
-## Features (so far)
-- User registration & login with secure password hashing
-- JWT protected routes (`/auth/me`)
-- Swagger UI with working Bearer token auth
-- Alembic migrations
-- Clean project structure
+I survived:
+- Alembic hell
+- Docker networking wars on Linux
+- 100+ errors in one day
+- Swagger's file upload tantrums
+- And still shipped this monster
+
+## Features (ALL WORKING)
+
+- User register / login with JWT
+- Create your company
+- Post unlimited jobs
+- Apply to jobs with PDF resume upload
+- View your applications
+- Duplicate apply protection
+- Clean async SQLModel + Alembic migrations
+- Dockerized PostgreSQL
+- Swagger UI with working Bearer auth
 
 ## Tech Stack
-- FastAPI + SQLModel
-- PostgreSQL (Docker)
-- JWT + bcrypt
+
+- FastAPI (async)
+- SQLModel + PostgreSQL
+- JWT authentication
 - Alembic migrations
+- Docker + docker-compose
+- Secure password hashing (bcrypt)
+- File upload (PDF resumes)
 
 ## Quick Start
+
 ```bash
-docker-compose up -d
+# Clone and enter
+git clone https://github.com/AlirezaGhgh021/fastapi-jobboard.git
+cd fastapi-jobboard
+
+# Start DB
+docker compose up -d db
+
+# Install & run
+poetry install
 alembic upgrade head
-uvicorn jobboard_api.main:app --reload
+poetry run uvicorn jobboard_api.main:app --reload
