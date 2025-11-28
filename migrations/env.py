@@ -7,6 +7,7 @@ from alembic import context
 from jobboard_api.models.user import User
 from jobboard_api.models.company import Company
 from jobboard_api.models.job import Job
+from jobboard_api.models.application import Application
 from sqlmodel import SQLModel
 
 target_metadata = SQLModel.metadata
