@@ -2,11 +2,11 @@ from errno import EOWNERDEAD
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import select
-from jobboard_api.database import AsyncSession, get_db
-from jobboard_api.models.company import Company
-from jobboard_api.schemas.company import CompanyCreate, CompanyOut
-from jobboard_api.models.user import User
-from jobboard_api.core.security import get_current_user
+from src.jobboard_api.database import AsyncSession, get_db
+from src.jobboard_api.models.company import Company
+from src.jobboard_api.schemas.company import CompanyCreate, CompanyOut
+from src.jobboard_api.models.user import User
+from src.jobboard_api.core.security import get_current_user
 
 router = APIRouter(prefix='/companies', tags=['companies'])
 

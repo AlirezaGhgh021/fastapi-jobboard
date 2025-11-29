@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlmodel import select
-from jobboard_api.database import AsyncSession, get_db
-from jobboard_api.models.application import Application
-from jobboard_api.schemas.application import ApplicationCreate, ApplicationOut
-from jobboard_api.models.user import User
-from jobboard_api.models.job import Job
-from jobboard_api.core.security import get_current_user
+from src.jobboard_api.database import AsyncSession, get_db
+from src.jobboard_api.models.application import Application
+from src.jobboard_api.schemas.application import ApplicationCreate, ApplicationOut
+from src.jobboard_api.models.user import User
+from src.jobboard_api.models.job import Job
+from src.jobboard_api.core.security import get_current_user
 import shutil
 import os
 

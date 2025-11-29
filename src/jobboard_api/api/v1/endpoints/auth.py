@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import Response, APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select
-from jobboard_api.database import AsyncSession, get_db
-from jobboard_api.models.user import User
-from jobboard_api.schemas.user import UserCreate, UserOut
-from jobboard_api.core.security import get_password_hash
-from jobboard_api.core.security import get_current_user
+from src.jobboard_api.database import AsyncSession, get_db
+from src.jobboard_api.models.user import User
+from src.jobboard_api.schemas.user import UserCreate, UserOut
+from src.jobboard_api.core.security import get_password_hash, get_current_user_from_cookie
+from src.jobboard_api.core.security import get_current_user
 from src.jobboard_api.core.security import verify_password, create_access_token
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -39,22 +39,37 @@ async def register(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
 
 
 @router.post('/login')
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
-    # find user
+async def login(
+    response: Response,                                          # ADD THIS
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: AsyncSession = Depends(get_db)
+):
     statement = select(User).where(User.email == form_data.username.lower())
     result = await db.execute(statement)
     user = result.scalar_one_or_none()
 
     if not user or not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={'www-Authenticate': "Bearer"},
-        )
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
 
     access_token = create_access_token(data={'sub': str(user.id)})
-    return {'access_token':access_token, 'token_type':'bearer'}
+
+    # THIS SETS THE COOKIE SO BROWSER STAYS LOGGED IN
+    response.set_cookie(
+        key="auth_token",
+        value=access_token,
+        httponly=True,
+        secure=False,           # True in production
+        samesite="lax",
+        max_age=60*60*24*7
+    )
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get('/me', response_model=UserOut)
-async def read_user_me(current_user: User = Depends(get_current_user)):
-    return current_user
+async def read_user_me(
+    cookie_user = Depends(get_current_user_from_cookie),   # tries cookie first
+    token_user = Depends(get_current_user),                # falls back to Bearer
+):
+    if not (cookie_user or token_user):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return cookie_user or token_user
