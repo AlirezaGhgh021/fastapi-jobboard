@@ -1,12 +1,10 @@
-from errno import EOWNERDEAD
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import select
 from src.jobboard_api.database import AsyncSession, get_db
 from src.jobboard_api.models.company import Company
 from src.jobboard_api.schemas.company import CompanyCreate, CompanyOut
 from src.jobboard_api.models.user import User
-from src.jobboard_api.core.security import get_current_user
+from src.jobboard_api.core.security import get_current_user, get_current_user_from_cookie
 
 router = APIRouter(prefix='/companies', tags=['companies'])
 
@@ -15,7 +13,7 @@ router = APIRouter(prefix='/companies', tags=['companies'])
 async def create_company(
         company_in : CompanyCreate,
         db: AsyncSession = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user_from_cookie or get_current_user)
 ):
     #One company per user for now
     existing = await db.execute(select(Company).where(Company.owner_id == current_user.id))
@@ -38,7 +36,7 @@ async def list_companies(db:AsyncSession = Depends(get_db)):
 @router.get('/me', response_model=CompanyOut)
 async def my_company(
         db:AsyncSession = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user_from_cookie or get_current_user)
 ):
     result = await db.execute(select(Company).where(Company.owner_id == current_user.id))
     company = result.scalar_one_or_none()

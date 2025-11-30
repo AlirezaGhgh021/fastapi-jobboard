@@ -5,9 +5,7 @@ from src.jobboard_api.models.job import Job
 from src.jobboard_api.schemas.job import JobCreate, JobOut
 from src.jobboard_api.models.user import User
 from src.jobboard_api.models.company import Company
-from src.jobboard_api.core.security import get_current_user
-
-
+from src.jobboard_api.core.security import get_current_user, get_current_user_from_cookie
 
 router = APIRouter(prefix='/jobs', tags=['jobs'])
 
@@ -15,7 +13,7 @@ router = APIRouter(prefix='/jobs', tags=['jobs'])
 async def create_job(
         job_in: JobCreate,
         db: AsyncSession = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user_from_cookie or get_current_user)
 ):
     # Get user's company
     result = await db.execute(select(Company).where(Company.owner_id == current_user.id))

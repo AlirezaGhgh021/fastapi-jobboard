@@ -5,7 +5,7 @@ from datetime import datetime
 class Application(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     cover_letter: Optional[str] = None
-    resume_path: str = Field(index=True)
+    resume_path: str | None = Field(default=None, nullable=True)
     applied_at: datetime = Field(default_factory=datetime.now)
 
     # Relationships

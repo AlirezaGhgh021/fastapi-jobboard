@@ -76,3 +76,9 @@ async def get_current_user_from_cookie(
     if not user:
         raise HTTPException(status_code=401)
     return user
+
+async def get_current_user_final(
+    cookie_user = Depends(get_current_user_from_cookie),
+    token_user = Depends(get_current_user),
+):
+    return cookie_user or token_user

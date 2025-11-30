@@ -1,5 +1,6 @@
 # src/jobboard_api/main.py
 from fastapi import FastAPI
+from fastapi.encoders import jsonable_encoder
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 
@@ -13,7 +14,7 @@ app = FastAPI(
     title=settings.APP_NAME,
     version="0.1.0",
     docs_url="/docs",
-    redoc_url=None
+    redoc_url=None,
 )
 
 # THIS MAKES SWAGGER SHOW EMAIL + PASSWORD FORM
